@@ -1,5 +1,5 @@
 package main
 
 import (
-	"github.com/juliancheal/go-gps"
+	"github.com/juliancheal/go-gps/gps"
 )
