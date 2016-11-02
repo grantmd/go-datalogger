@@ -18,7 +18,28 @@ func init() {
 	log.Println("Scanning for USB video devices")
 
 	devs, err := ctx.ListDevices(func(desc *usb.Descriptor) bool {
+		if desc.Class != 0xef {
+			return false
+		}
+
 		log.Printf("  Protocol: %s\n", usbid.Classify(desc))
+		log.Printf("  Class: %#x, SubClass: %#x, Protocol: %#x\n", desc.Class, desc.SubClass, desc.Protocol)
+
+		for _, cfg := range desc.Configs {
+			log.Printf("  %s:\n", cfg)
+			for _, alt := range cfg.Interfaces {
+				log.Printf("    --------------\n")
+				for _, iface := range alt.Setups {
+					log.Printf("    %s\n", iface)
+					log.Printf("      %s\n", usbid.Classify(iface))
+					for _, end := range iface.Endpoints {
+						log.Printf("      %s\n", end)
+					}
+				}
+			}
+			log.Printf("    --------------\n")
+		}
+
 		return false
 	})
 
